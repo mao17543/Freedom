@@ -32,6 +32,7 @@
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "AutoLight.cginc"
+			#include "Assets\Test1_GPUInstance\CurvedRenderCommon.cginc"
 
 			sampler2D _Tex1;
 			sampler2D _Tex2;
@@ -69,7 +70,8 @@
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
-				o.pos = UnityObjectToClipPos(v.vertex);
+				//o.pos = UnityObjectToClipPos(v.vertex);
+				o.pos = CalculateCurvedViewPos(v.vertex);
 				o.worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject));
 				o.uv = v.uv;
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
@@ -83,7 +85,7 @@
 				float3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;
 				float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
 				float3 diffuse = _LightColor0.rgb*saturate(0.5*dot(worldNormal, lightDir) + 0.5);
-				float shadow = SHADOW_ATTENUATION(i);
+				float shadow = 1;//SHADOW_ATTENUATION(i);
 				UNITY_LIGHT_ATTENUATION(atten, i, i.worldPos.xyz);
 				float3 mainTex1,mainTex2,mainTex3,mainTex4 = float3(0,0,0);
 				UNITY_SETUP_INSTANCE_ID(i);

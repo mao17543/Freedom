@@ -311,9 +311,20 @@ public class Test1 : MonoBehaviour
         }
     }
 
+    public float offset = 0.0f;
+    public float distance = 0.0f;
+    public float horizontalScale = 0.0f;
+    public float decalHeightY = 0.0f;
+
     void Update()
     {
         if (DRAW_INSTANCE)
             UpdateGPUInstance();
+
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Shader.SetGlobalVector("_CurvedParam", new Vector4(offset / distance / distance, horizontalScale, 0, 0));
+            Shader.SetGlobalFloat("_DecalHeightYParam", decalHeightY);
+        }
     }
 }
