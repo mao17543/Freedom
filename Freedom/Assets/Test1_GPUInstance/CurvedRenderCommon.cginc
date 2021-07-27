@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 #ifndef CURVED_RENDERING_COMMON
 #define CURVED_RENDERING_COMMON
 
@@ -70,4 +72,9 @@ float4 CalculateFacingCameraCurvedViewPos(float4 vertex) {
 	return mul(UNITY_MATRIX_P, viewPos);
 }
 
+float4 CalculateTestViewPos(float4 vertex) {
+	float4 vPos = UnityObjectToClipPos(float4(vertex.xyz, 1.0)); //mul(UNITY_MATRIX_MV, vertex);
+
+	return vPos;
+}
 #endif

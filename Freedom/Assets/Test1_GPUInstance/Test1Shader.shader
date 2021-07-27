@@ -51,7 +51,8 @@
 			{
 				float2 uv : TEXCOORD0;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
-					float4 pos : SV_POSITION;
+				float4 pos : SV_POSITION;
+				float4 pos2 : TEXCOORD4;
 				float3 worldNormal:TEXCOORD1;
 				float3 worldPos:TEXCOORD2;
 				SHADOW_COORDS(3)
@@ -70,8 +71,11 @@
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
-				//o.pos = UnityObjectToClipPos(v.vertex);
-				o.pos = CalculateCurvedViewPos(v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
+				//o.pos = CalculateCurvedViewPos(v.vertex);
+				//o.pos = CalculateTestViewPos(v.vertex);
+				o.pos2 = v.vertex;
+
 				o.worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject));
 				o.uv = v.uv;
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
@@ -96,11 +100,19 @@
 				mainTex4 = tex2D(_Tex4, i.uv).xyz;
 
 				//根据传来的0和1选择贴图
-				return float4(((mainTex1 * UNITY_ACCESS_INSTANCED_PROP(Props, _Index1) +
+				float4 ret = float4(((mainTex1 * UNITY_ACCESS_INSTANCED_PROP(Props, _Index1) +
 					mainTex2 * UNITY_ACCESS_INSTANCED_PROP(Props, _Index2) +
 					mainTex3 * UNITY_ACCESS_INSTANCED_PROP(Props, _Index3) +
 					mainTex4 * UNITY_ACCESS_INSTANCED_PROP(Props, _Index4)
 					)*diffuse + ambient)*shadow,1);
+
+				//float4 testCol = CalculateTestViewPos(i.pos2);
+				//ret = float4(testCol.y/ testCol.w, 0, 0, 1);
+				//half test = dot(half3(ret.r, ret.g, ret.b), half3(.1, .2, .3));
+				//ret = half4(test, test, test, ret.a);
+
+
+				return ret;
 			}
 			ENDCG
 		}
