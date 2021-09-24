@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class FlockingGPU : MonoBehaviour
 {
@@ -18,11 +19,17 @@ public class FlockingGPU : MonoBehaviour
     private int _groupSizeX;
     private int _numOfBoids;
 
+
+    #region Instance
+    private MeshRenderer meshRenderer;
+    Matrix4x4[] listMatrix;
+    #endregion
+
     void Start()
     {
         _kernelHandle = shader.FindKernel("CSMain");
 
-        uint x;
+        uint x=1;
         // 获取 Compute Shader 中定义的 numthreads
         shader.GetKernelThreadGroupSizes(_kernelHandle, out x, out _, out _);
         _groupSizeX = Mathf.CeilToInt(boidsCount / (float) x);
@@ -37,13 +44,20 @@ public class FlockingGPU : MonoBehaviour
     {
         _boids = new GameObject[_numOfBoids];
         _boidsArray = new Boid[_numOfBoids];
+        listMatrix = new Matrix4x4[_numOfBoids];
+
+        MeshFilter meshF = boidPrefab.GetComponent<MeshFilter>();
+        mesh = meshF.sharedMesh;
+        mat = boidPrefab.GetComponent<MeshRenderer>().sharedMaterial;
 
         for (int i = 0; i < _numOfBoids; i++)
         {
             Vector3 pos = transform.position + Random.insideUnitSphere * spawnRadius;
             _boidsArray[i] = new Boid(pos);
-            _boids[i] = Instantiate(boidPrefab, pos, Quaternion.identity);
-            _boidsArray[i].direction = _boids[i].transform.forward;
+            //_boids[i] = Instantiate(boidPrefab, pos, Quaternion.identity);
+            //_boidsArray[i].direction = _boids[i].transform.forward;
+            _boidsArray[i].direction = Vector3.forward;
+            listMatrix[i] = new Matrix4x4();
         }
     }
 
@@ -61,6 +75,11 @@ public class FlockingGPU : MonoBehaviour
         shader.SetInt("boidsCount", boidsCount);
     }
 
+    const int MAX_DRAW_COUNT = 128;
+    Matrix4x4[] tempMatrix = new Matrix4x4[MAX_DRAW_COUNT];
+    Mesh mesh;
+    Material mat;
+
     void Update()
     {
         // 设置每一帧会变的变量
@@ -75,13 +94,38 @@ public class FlockingGPU : MonoBehaviour
         // 设置鸟的 position 和 rotation
         for (int i = 0; i < _boidsArray.Length; i++)
         {
-            _boids[i].transform.localPosition = _boidsArray[i].position;
+            Quaternion rot = Quaternion.identity;
+            //_boids[i].transform.localPosition = _boidsArray[i].position;
 
             if (!_boidsArray[i].direction.Equals(Vector3.zero))
             {
-                _boids[i].transform.rotation = Quaternion.LookRotation(_boidsArray[i].direction);
+                //_boids[i].transform.rotation = Quaternion.LookRotation(_boidsArray[i].direction);
+                rot = Quaternion.LookRotation(_boidsArray[i].direction);
             }
+
+            listMatrix[i].SetTRS(_boidsArray[i].position, rot, Vector3.one);
         }
+
+        int index = 0;
+        int count = 0;
+
+        while (index < listMatrix.Length)
+        {
+            tempMatrix[count] = listMatrix[index];
+
+            if (count == MAX_DRAW_COUNT - 1)
+            {
+                Graphics.DrawMeshInstanced(mesh, 0, mat, tempMatrix, MAX_DRAW_COUNT);
+                count = 0;
+            }
+            else
+            {
+                count++;
+            }
+
+            index++;
+        }
+
     }
 
     void OnDestroy()
