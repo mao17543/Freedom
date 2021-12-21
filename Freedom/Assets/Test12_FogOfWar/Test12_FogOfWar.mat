@@ -4,22 +4,23 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Test9_FogOfWar
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Test12_FogOfWar
   m_Shader: {fileID: 4800000, guid: f834fb7f2b800ce49bd8187255e1ab3e, type: 3}
   m_ShaderKeywords: LOD_HIGH
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2001
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseTex:
-        m_Texture: {fileID: 2800000, guid: 983c7042a3a03334390a8786d6eb57ee, type: 3}
+        m_Texture: {fileID: 2800000, guid: df93ff6635c368147a1285139b35c109, type: 3}
         m_Scale: {x: 11, y: 11}
         m_Offset: {x: 0, y: 0}
     - _CloudTex:
@@ -42,6 +43,7 @@ Material:
         m_Texture: {fileID: 2800000, guid: 1038d6fb07de4a84eb3e7b80eb51cf05, type: 3}
         m_Scale: {x: 300, y: 300}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _BlendColorHeight: 500
     - _BlendColorHeightRange: 4400
@@ -65,3 +67,4 @@ Material:
     - _BlendColor: {r: 0.8014706, g: 0.8014706, b: 0.8014706, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _GridRange: {r: 1501.25, g: 1455.5312, b: 180, a: 181.86534}
+  m_BuildTextureStacks: []
